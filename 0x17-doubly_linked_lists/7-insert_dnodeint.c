@@ -1,51 +1,50 @@
 #include "lists.h"
-/**
-  * *insert_dnodeint_at_idx - Insert a new node into a doubly
-  * linked list at a given index
-  * @head: Double pointer to the start of the list
-  * @idx: Index to insert new node at
-  * @n: Value to assign to new node
-  * Return: Address of the new node, NULL if it fails
-  */
-dlistint_t *insert_dnodeint_at_idx(dlistint_t **head, unsigned int idx, int n)
-{
-	unsigned int pos;
-	dlistint_t *new_node, *current, *prev;
 
-	current = *head;
-	if (*head == NULL && idx != 0)
+/**
+ * *insert_dnodeint_at_index - Inserts a new node at an index in a list
+ * @h: The first node in the list
+ * @idx: The specified place to insert the new node
+ * @n: An element of the new node
+ *
+ * Return: The address of the new node or NULL
+ */
+dlistint_t *insert_dnodeint_at_index(dlistint_t **h, unsigned int idx, int n)
+{
+	unsigned int check = 0;
+	dlistint_t *current = *h;
+	dlistint_t *new = malloc(sizeof(dlistint_t));
+
+	if (new == NULL)
 		return (NULL);
-	new_node = malloc(sizeof(dlistint_t));
-	if (new_node == NULL)
-		return (NULL);
-	if (*head != NULL)
+
+	new->n = n;
+	new->prev = NULL;
+	new->next = *h;
+
+	if (idx == 0)
 	{
-		prev = NULL;
-		while (current->prev != NULL)
-			current = current->prev;
-		for (pos = 0; current != NULL && pos < idx; pos++)
-		{
-			prev = current;
-			current = current->next;
-		}
-		if (pos == idx)
-		{
-			new_node->n = n;
-			new_node->prev = prev;
-			if (current != NULL)
-				current->prev = new_node;
-			new_node->next = current;
-			if (idx != 0)
-				prev->next = new_node;
-			else
-				*head = new_node;
-			return (new_node);
-		}
-		return (NULL);
+		if (*h)
+			(*h)->prev = new;
+		*h = new;
+		return (new);
 	}
-	new_node->next = NULL;
-	new_node->prev = NULL;
-	new_node->n = n;
-	*head = new_node;
-	return (new_node);
+	else if (*h)
+	{
+		while (current)
+		{
+			if (check + 1 == idx)
+			{
+				new->next = current->next;
+				new->prev = current;
+				current->next = new;
+				if (new->next)
+					new->next->prev = new;
+				return (new);
+			}
+			current = current->next;
+			check++;
+		}
+	}
+	free(new);
+	return (NULL);
 }
